@@ -16,6 +16,7 @@ import javax.persistence.*;
 @ToString
 public class FormulaBean {
     @Id
+    @Getter
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 

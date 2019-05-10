@@ -19,6 +19,7 @@ import javax.persistence.*;
 public class BaseBean {
 
     @Id
+    @Getter
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 

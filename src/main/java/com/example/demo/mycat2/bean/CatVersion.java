@@ -12,6 +12,7 @@ import javax.persistence.*;
 public class CatVersion {
 
     @Id
+    @Getter
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 

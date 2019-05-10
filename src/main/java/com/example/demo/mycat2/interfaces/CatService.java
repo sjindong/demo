@@ -2,6 +2,7 @@ package com.example.demo.mycat2.interfaces;
 
 
 import com.example.demo.mycat2.bean.BaseBean;
+import com.example.demo.mycat2.bean.CatVersion;
 import com.example.demo.mycat2.bean.FormulaBean;
 
 import java.util.List;
@@ -15,11 +16,10 @@ public interface CatService {
     /**
      * 检查版本
      *
-     * @param base    基础版本
-     * @param formula 合成公式版本
+     * @param versions 基础版本
      * @return
      */
-    String checkVersion(long base, long formula);
+    List<CatVersion> checkVersion(List<CatVersion> versions);
 
     /**
      * 查找所有的合成公式

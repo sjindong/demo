@@ -1,138 +1,53 @@
 package com.example.demo.mycat2.dao;
 
 import com.example.demo.mycat2.bean.BaseBean;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * 创建Dao接口
  */
+@Transactional
 public interface BaseBeanDao extends JpaRepository<BaseBean, Long> {
-    /* *****************************create***************************************/
     @Override
-    <S extends BaseBean> S save(S s);
+    List<BaseBean> findAll();
 
-    /* *****************************read***************************************/
-
-    /**
-     * Using sort
-     *
-     * @param name  名称
-     * @return
-     */
-    @Query("select u from BaseBean u where u.name = ?1")
-    List<BaseBean> findByAndSort(String name);
-
-    /**
-     * Query creation
-     * this translates into the following query:
-     * select u from BaseBean u where u.idCard = ?1
-     */
-    BaseBean findByIdCard(String idCard);
-
-    /**
-     * Native Queries
-     * The @Query annotation allows for running native queries by setting the nativeQuery flag to true
-     *
-     * @param idCard
-     * @return
-     */
-    @Query(value = "select * from user where ID_CARD = ?1", nativeQuery = true)
-    BaseBean findByIdCard2(String idCard);
-
-    /**
-     * Using @Query
-     *
-     * @param idCard
-     * @return
-     */
-    @Query("select u from BaseBean u where u.idCard = ?1")
-    BaseBean findByIdCard3(String idCard);
-
-    /**
-     * Declare native count queries for pagination at the query method by using @Query
-     *
-     * @param lastName
-     * @param pageable
-     * @return
-     */
-    @Query(value = "SELECT * FROM BaseBean WHERE name = ?1",
-            countQuery = "SELECT count(*) FROM BaseBean WHERE name = ?1",
-            nativeQuery = true)
-    Page<BaseBean> findByLastNameWithPageable(String lastName, Pageable pageable);
-
-    /**
-     * Using Named Parameters
-     *
-     * @param firstName
-     * @param lastName
-     * @return
-     */
-    @Query("select u from BaseBean u where u.firstName = :firstName or u.lastName = :lastName")
-    List<BaseBean> findByFirstNameOrLastName(@Param("firstName") String firstName,
-                                                @Param("lastName") String lastName);
-
-    /**
-     * findByDateOfBirth
-     *
-     * @param date
-     * @return
-     */
-    List<BaseBean> findByDateOfBirth(@Param("date") LocalDate date);
-
-    /**
-     * find all users
-     *
-     * @param sort
-     * @return
-     */
     @Override
-    List<BaseBean> findAll(Sort sort);
-    /****************************update*****************************************/
-    /**
-     * update a usr by Modifying Queries
-     *
-     * @param firstName
-     * @param idCard
-     * @return
-     */
+    List<BaseBean> findAllById(Iterable<Long> iterable);
+
     @Modifying
-    @Query("update BaseBean u set u.firstName = ?1 where u.idCard = ?2")
-    int updateUser(String firstName, String idCard);
-    /****************************delete*****************************************/
-    /**
-     * delete a user by idCard
-     *
-     * @param idCard
-     */
-    void deleteByIdCard(String idCard);
+    @Query(value = "update BaseBean set name = :name where id = :id", nativeQuery = true)
+    void updateNameById(@Param("id") Long id, @Param("name") String name);
 
-    /**
-     * Using a derived delete query
-     *
-     * @param idCard
-     */
     @Modifying
-    @Query("delete from BaseBean u where u.idCard = ?1")
-    void deleteByIdCard2(String idCard);
+    @Query(value = "update BaseBean set type = :type where id = :id", nativeQuery = true)
+    void updateTypeById(@Param("id") Long id, @Param("type") int type);
 
-    /**
-     * delete a user by id
-     *
-     * @param id
-     */
-    @Override
     @Modifying
-    @Query(value = "delete from user where id = ?1", nativeQuery = true)
-    void deleteById(Long id);
+    @Query(value = "update BaseBean set isEffect = :isEffect where id = :id", nativeQuery = true)
+    void updateIsEffectById(@Param("id") Long id, @Param("isEffect") boolean isEffect);
 
+    @Modifying
+    @Query(value = "update BaseBean set addition=:addition,buff = :buff where id = :id", nativeQuery = true)
+    void updateBuffById(@Param("id") Long id, @Param("buff") String buff, @Param("addition") String addition);
 
+    @Modifying
+    @Query(value = "update BaseBean set name=:name,type=:type,isEffect=:isEffect,addition=:addition,buff = :buff where id = :id", nativeQuery = true)
+    void update(@Param("id") Long id, @Param("name") String name, @Param("type") int type, @Param("isEffect") boolean isEffect, @Param("buff") String buff, @Param("addition") String addition);
+
+    /**报错：
+     * java.sql.SQLException: Can not issue data manipulation statements with executeQuery().
+     * 解决方式：
+     * 在修改方法上面添加@Modifying 注解
+     * 报错：
+     * javax.persistence.TransactionRequiredException: Executing an update/delete query
+     * 解决方式：
+     * 在UserRepository.java类上添加@Transactional注解
+     */
 }
